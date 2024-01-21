@@ -3,11 +3,13 @@ package com.KunJinKao.domain.entity;
 import java.util.Date;
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 文章表(Article)表实体类
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("sg_article")
+@Accessors(chain = true)//链式操作,set方法由void返回值变成返回对象本身
 public class Article {
     @TableId
     private Long id;
@@ -31,6 +34,10 @@ public class Article {
     private String summary;
     //所属分类id
     private Long categoryId;
+
+    @TableField(exist = false)//代表这个字段在数据表中实际上是不存在的
+    private String categoryName;
+
     //缩略图
     private String thumbnail;
     //是否置顶（0否，1是）
