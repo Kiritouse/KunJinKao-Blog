@@ -1,4 +1,5 @@
 package com.KunJinKao.service;
+import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 /**
@@ -8,5 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-01-20 20:46:24
  */
 public interface CategoryService extends IService<Category> {
+    ResponseResult getCategoryList();
 }
 
