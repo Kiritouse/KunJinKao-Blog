@@ -4,6 +4,7 @@ import com.KunJinKao.constants.SystemConstants;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Article;
 import com.KunJinKao.domain.entity.Category;
+import com.KunJinKao.domain.vo.ArticleDetailVo;
 import com.KunJinKao.domain.vo.ArticleListVo;
 import com.KunJinKao.domain.vo.HotArticleVo;
 import com.KunJinKao.domain.vo.PageVo;
@@ -90,6 +91,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 
         return ResponseResult.okResult(pageVo);
+    }
+
+    @Override
+    public ResponseResult getArticleDetail(Long id) {
+        //根据id查询文章
+        Article article = getById(id);//根据id查询,自带的可以查询到数据
+
+        //转换成VO
+        ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
+        //查询分类id查询查询分类名称
+        Long categoryId = article.getCategoryId();
+        Category category = categoryService.getById(categoryId);
+        if(category!=null) {
+            articleDetailVo.setCategoryName(category.getName());;
+        }
+        //封装响应返回
+        return ResponseResult.okResult(articleDetailVo);
     }
 
 }
