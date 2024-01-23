@@ -50,15 +50,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/login").anonymous()
+                //必须携带token的端口
+                .antMatchers("/logout").authenticated()
                 .antMatchers("/link/getAllLink").authenticated()//这个接口需要认证后才能访问
                 // 除上面外的所有请求全部不需要认证即可访问
                 .anyRequest().permitAll();
+
+
         //配置异常处理器
         http.exceptionHandling()
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler);
 
-        http.logout().disable();
+        http.logout().disable();//这是自带的注销接口,我们不用,因为自己写了的
         //允许跨域
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.cors();

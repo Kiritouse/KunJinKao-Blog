@@ -13,3 +13,10 @@
 # @PathVariable的作用
 
 > `@PathVariable` 是 Java Spring 框架中的一个注解，它可以帮助你从 URL 中获取一些信息。比如，你有一个 URL 是 `/api/employees/{id}`，这里的 `{id}` 是一个占位符，表示员工的 ID。你可以使用 `@PathVariable` 注解来获取这个 `{id}` 的值。这样，你就可以根据这个 id 来获取或操作对应的员工信息了。。
+
+
+
+# 登录接口一般都是用Post请求
+
+1. token进行校验
+2. userInfo
