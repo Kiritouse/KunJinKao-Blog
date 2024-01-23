@@ -1,5 +1,6 @@
 package com.KunJinKao.service.impl;
 
+import com.KunJinKao.constants.SystemConstants;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Comment;
 import com.KunJinKao.domain.vo.CommentVo;
@@ -10,7 +11,6 @@ import com.KunJinKao.mapper.CommentMapper;
 import com.KunJinKao.service.CommentService;
 import com.KunJinKao.service.UserService;
 import com.KunJinKao.utils.BeanCopyUtils;
-import com.KunJinKao.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,12 +34,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private UserService userService;
 
     @Override
-    public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
+    public ResponseResult commentList(String commentType, Long articleId, Integer pageNum, Integer pageSize) {
         //查询对应文章的根评论,根评论root为-1
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        //查询对应文章的子评论.对articleId进行判断
-        queryWrapper.eq(Comment::getArticleId, articleId);
+        //查询对应文章的子评论.对articleId进行判断,友链没有文章id,所以这里查询的是文章评论的情况
+        queryWrapper.eq(SystemConstants.ARTICLE_COMMENT.equals(commentType),Comment::getArticleId, articleId);
         queryWrapper.eq(Comment::getRootId, -1);
+
+        //评论类型
+        queryWrapper.eq(Comment::getType,commentType);
         //分页查询
         Page<Comment> page = new Page(pageNum, pageSize);
         page(page, queryWrapper);
