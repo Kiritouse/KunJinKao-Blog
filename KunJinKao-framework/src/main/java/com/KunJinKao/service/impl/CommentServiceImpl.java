@@ -4,16 +4,20 @@ import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Comment;
 import com.KunJinKao.domain.vo.CommentVo;
 import com.KunJinKao.domain.vo.PageVo;
+import com.KunJinKao.enums.AppHttpCodeEnum;
+import com.KunJinKao.exception.SystemException;
 import com.KunJinKao.mapper.CommentMapper;
 import com.KunJinKao.service.CommentService;
 import com.KunJinKao.service.UserService;
 import com.KunJinKao.utils.BeanCopyUtils;
+import com.KunJinKao.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -52,6 +56,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         return ResponseResult.okResult(new PageVo(commentVoList, page.getTotal()));
 
+    }
+
+    @Override
+    public ResponseResult addComment(Comment comment) {
+        //在Utils里有mybabits的自动字段填充
+        //评论内容不难为空
+        if(!StringUtils.hasText(comment.getContent())){
+            throw new SystemException(AppHttpCodeEnum.CONTENT_NOT_NULL);
+        }
+        save(comment);
+        return ResponseResult.okResult();
     }
 
     /**
