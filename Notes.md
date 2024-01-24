@@ -27,4 +27,8 @@
 
 
 
-#
+# @Data注解,会自动读取配置文件中的同名字段,然后自动生成get,set方法
+
+# 七牛云OssUploadService中的外链域名可能会过期,过期了记得自己改
+
+# 若传入后端的参数中有Json格式,那么需要在Controller对应的同名形参前加上@RequestBody 对应的实体类

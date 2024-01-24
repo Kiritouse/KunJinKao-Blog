@@ -21,6 +21,12 @@ import org.springframework.stereotype.Service;
     public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
+    public ResponseResult updateUserInfo(User user) {
+        updateById(user);
+        return null;
+    }
+
+    @Override
     public ResponseResult userInfo() {
         //获取当前用户id
         Long userId = SecurityUtils.getUserId();

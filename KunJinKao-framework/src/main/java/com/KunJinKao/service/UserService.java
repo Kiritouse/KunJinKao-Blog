@@ -9,6 +9,8 @@ import com.KunJinKao.domain.entity.User;
  * @since 2024-01-23 11:02:10
  */
 public interface UserService extends IService<User> {
+     ResponseResult updateUserInfo(User user);
+
     ResponseResult userInfo();
 }
 
