@@ -20,3 +20,11 @@
 
 1. token进行校验
 2. userInfo
+
+
+
+# 在Controller里,如果是querry类型的参数就不需要加注解
+
+
+
+#

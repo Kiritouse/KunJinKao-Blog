@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").anonymous()
                 //必须携带token的端口
                 .antMatchers("/logout").authenticated()
-                .antMatchers("/link/getAllLink").authenticated()//这个接口需要认证后才能访问
+               // .antMatchers("/link/getAllLink").authenticated()//这个接口需要认证后才能访问(仅测试用)
                 // 除上面外的所有请求全部不需要认证即可访问
                 .anyRequest().permitAll();
 
