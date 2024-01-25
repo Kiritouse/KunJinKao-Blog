@@ -12,6 +12,7 @@ import com.KunJinKao.mapper.ArticleMapper;
 import com.KunJinKao.service.ArticleService;
 import com.KunJinKao.service.CategoryService;
 import com.KunJinKao.utils.BeanCopyUtils;
+import com.KunJinKao.utils.RedisCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,6 +32,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Lazy//防止循环依赖
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private RedisCache redisCache;
+
     @Override
     public ResponseResult hotArticleList() {
         //查询热门文章,封装成一个ResponseResult对象返回
@@ -74,7 +78,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         List<Article> articles = page.getRecords();
         //查询categoryName
-        articles=articles.stream()
+        articles = articles.stream()
                 .map(article -> {
                     //获取分类id,查询分类信息,获取分类名称
                     //把分类名称设置给article
@@ -83,11 +87,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .collect(Collectors.toList());
 
 
-
         //封装查询结果,封装成VO
         List<ArticleListVo> articleListVos = BeanCopyUtils.copyBeanList(page.getRecords(), ArticleListVo.class);
 
-        PageVo pageVo = new PageVo(articleListVos,page.getTotal());
+        PageVo pageVo = new PageVo(articleListVos, page.getTotal());
 
 
         return ResponseResult.okResult(pageVo);
@@ -103,11 +106,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //查询分类id查询查询分类名称
         Long categoryId = article.getCategoryId();
         Category category = categoryService.getById(categoryId);
-        if(category!=null) {
-            articleDetailVo.setCategoryName(category.getName());;
+        if (category != null) {
+            articleDetailVo.setCategoryName(category.getName());
+            ;
         }
         //封装响应返回
         return ResponseResult.okResult(articleDetailVo);
+    }
+
+    //在某一时间就会将文章的浏览量存储到redis中
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        //更新redis中的浏览量，对应文章id的viewCount浏览量。article:viewCount是ViewCountRunner类里面写的
+        //用户每从mysql根据文章id查询一次浏览量，那么redis的浏览量就增加1
+        redisCache.incrementCacheMapValue("article:viewCount", id.toString(), 1);
+        return ResponseResult.okResult();
     }
 
 }

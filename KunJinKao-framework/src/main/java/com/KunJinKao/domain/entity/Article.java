@@ -35,7 +35,7 @@ public class Article {
     //所属分类id
     private Long categoryId;
 
-    @TableField(exist = false)//代表这个字段在数据表中实际上是不存在的
+    @TableField(exist = false)//代表这个字段在数据表中实际上是不存在的,避免MyBabitsPlus在查询的时候出错
     private String categoryName;
 
     //缩略图
@@ -58,6 +58,11 @@ public class Article {
     private Date updateTime;
     //删除标志（0代表未删除，1代表已删除）
     private Integer delFlag;
+//将redis中的浏览量更新到mysql数据库中
+    public Article(Long id,long viewCount){
+        this.id = id;
+        this.viewCount = viewCount;
+    }
 
 }
 
