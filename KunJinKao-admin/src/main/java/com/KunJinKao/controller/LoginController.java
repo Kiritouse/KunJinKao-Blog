@@ -10,6 +10,7 @@ import com.KunJinKao.service.MenuService;
 import com.KunJinKao.service.RoleService;
 import com.KunJinKao.service.SystemLoginService;
 import com.KunJinKao.utils.BeanCopyUtils;
+import com.KunJinKao.utils.RedisCache;
 import com.KunJinKao.utils.SecurityUtils;
 import com.KunJinKao.domain.vo.AdminUserInfoVo;
 import com.KunJinKao.domain.vo.RoutersVo;
@@ -82,5 +83,30 @@ public class LoginController {
         List<Menu> menus = menuService.selectRouterMenuTreeByUserId(userId);
         //封装响应返回
         return ResponseResult.okResult(new RoutersVo(menus));
+    }
+    //--------------------------退出登录的接口(不建议直接写在controller)--------------------------------
+
+    //@Autowired
+    //private RedisCache redisCache;
+    //
+    //@PostMapping("/user/logout")
+    //public ResponseResult logout(){
+    //    //获取当前登录的用户id
+    //    Long userId = SecurityUtils.getUserId();
+    //
+    //    //删除redis中对应的值
+    //    redisCache.deleteObject("login:"+userId);
+    //    return ResponseResult.okResult();
+    //}
+
+    //-----------------------------退出登录的接口(我们写在service比较好---------------------------------
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @PostMapping("/user/logout")
+    public ResponseResult logout(){
+        //退出登录
+        return systemLoginService.logout();
     }
 }
