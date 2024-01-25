@@ -4,6 +4,7 @@ import com.KunJinKao.annotation.SystemLog;
 import com.KunJinKao.domain.ResponseResult;
 
 import com.KunJinKao.service.ArticleService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/article")
+@Api(tags="文章相关接口",description = "暂定")
 public class ArticleController {
     @Autowired
     private ArticleService articleService;

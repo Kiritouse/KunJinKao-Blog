@@ -29,7 +29,7 @@ public class UpdateViewCount {
     private ArticleService articleService;
 
     //每隔3分钟，把redis的浏览量数据更新到mysql数据库
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void updateViewCount() {
         //获取redis中的浏览量，注意得到的viewCountMap是HashMap双列集合
         Map<String, Integer> viewCountMap = redisCache.getCacheMap("article:viewCount");

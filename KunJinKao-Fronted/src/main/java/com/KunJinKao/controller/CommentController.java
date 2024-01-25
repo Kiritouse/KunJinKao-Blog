@@ -4,6 +4,7 @@ import com.KunJinKao.constants.SystemConstants;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Comment;
 import com.KunJinKao.service.CommentService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
+@Api(tags="评论相关接口",description = "暂定")
 public class CommentController {
 
     @Autowired
