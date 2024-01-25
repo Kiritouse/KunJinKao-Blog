@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     //把官方的PasswordEncoder密码加密方式替换成BCryptPasswordEncoder
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
@@ -58,10 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
 
-                /* 由于刚开始博客后台模块，还没有登录、权限认证的功能，所以在复制过来后，要把下面的那部分注释掉
-
                 // 对于登录接口 允许匿名访问
-                .antMatchers("/login").anonymous()
+                .antMatchers("/user/login").anonymous()
+
+                // 由于刚开始博客后台模块，还没有登录、权限认证的功能，所以在复制过来后，要把下面的那部分注释掉
+
+
 
                 //为方便测试认证过滤器，我们把查询友链的接口设置为需要登录才能访问。然后我们去访问的时候就能测试登录认证功能了
 //                .antMatchers("/link/getAllLink").authenticated()
@@ -78,10 +80,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //需要登录才能在评论区发送评论
                 .antMatchers("/comment").authenticated()
 
-                */
 
-                // 除上面外的所有请求全部不需要认证即可访问
-                .anyRequest().permitAll();
+
+                // 除上面外的所有请求全部都需要认证才可访问
+                .anyRequest().authenticated();
 
         //把我们写的自定义异常处理器配置给Security
         http.exceptionHandling()
@@ -97,5 +99,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //允许跨域
         http.cors();
     }
-
 }
