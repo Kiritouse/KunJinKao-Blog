@@ -2,9 +2,11 @@ package com.KunJinKao.controller;
 
 import com.KunJinKao.domain.entity.Menu;
 import com.KunJinKao.domain.ResponseResult;
+import com.KunJinKao.domain.vo.MenuTreeVo;
 import com.KunJinKao.service.MenuService;
 import com.KunJinKao.utils.BeanCopyUtils;
 import com.KunJinKao.domain.vo.MenuVo;
+import com.KunJinKao.utils.SystemConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,5 +67,16 @@ public class MenuController {
         }
         menuService.removeById(menuId);
         return ResponseResult.okResult();
+    }
+
+    //----------------------------新增角色-获取菜单下拉树列表-------------------------------
+
+
+    @GetMapping("/treeselect")
+    public ResponseResult treeselect() {
+        //复用之前的selectMenuList方法。方法需要参数，参数可以用来进行条件查询，而这个方法不需要条件，所以直接new Menu()传入
+        List<Menu> menus = menuService.selectMenuList(new Menu());
+        List<MenuTreeVo> options =  SystemConverter.buildMenuSelectTree(menus);
+        return ResponseResult.okResult(options);
     }
 }
