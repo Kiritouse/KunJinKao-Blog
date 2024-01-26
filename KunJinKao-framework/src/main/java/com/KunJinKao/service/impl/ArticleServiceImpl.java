@@ -1,5 +1,7 @@
 package com.KunJinKao.service.impl;
 
+import com.KunJinKao.domain.dto.ArticleDto;
+import com.KunJinKao.domain.vo.*;
 import com.KunJinKao.service.ArticleVoService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,15 +18,11 @@ import com.KunJinKao.service.ArticleTagService;
 import com.KunJinKao.service.CategoryService;
 import com.KunJinKao.utils.BeanCopyUtils;
 import com.KunJinKao.utils.RedisCache;
-import com.KunJinKao.domain.vo.ArticleDetailVo;
-import com.KunJinKao.domain.vo.ArticleListVo;
-import com.KunJinKao.domain.vo.ArticleVo;
-import com.KunJinKao.domain.vo.HotArticleVo;
-import com.KunJinKao.domain.vo.PageVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +70,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //按照浏览量进行排序。也就是根据ViewCount字段降序排序
         queryWrapper.orderByDesc(Article::getViewCount);
         //最多只能查询出来10条消息。当前显示第一页的数据，每页显示10条数据
-        Page<Article> page = new Page<>(SystemConstants.ARTICLE_STATUS_CURRENT,SystemConstants.ARTICLE_STATUS_SIZE);
-        page(page,queryWrapper);
+        Page<Article> page = new Page<>(SystemConstants.ARTICLE_STATUS_CURRENT, SystemConstants.ARTICLE_STATUS_SIZE);
+        page(page, queryWrapper);
 
         //获取最终的查询结果，把结果封装在Article实体类里面会有很多不需要的字段
         List<Article> articles = page.getRecords();
@@ -107,17 +105,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
 
         //判空。如果前端传了categoryId这个参数，那么查询时要和传入的相同。第二个参数是数据表的文章id，第三个字段是前端传来的文章id
-        lambdaQueryWrapper.eq(Objects.nonNull(categoryId)&&categoryId>0,Article::getCategoryId,categoryId);
+        lambdaQueryWrapper.eq(Objects.nonNull(categoryId) && categoryId > 0, Article::getCategoryId, categoryId);
 
         //只查询状态是正式发布的文章。Article实体类的status字段跟0作比较，一样就表示是正式发布的
-        lambdaQueryWrapper.eq(Article::getStatus,SystemConstants.ARTICLE_STATUS_NORMAL);
+        lambdaQueryWrapper.eq(Article::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
 
         //对isTop字段进行降序排序，实现置顶的文章(isTop值为1)在最前面
         lambdaQueryWrapper.orderByDesc(Article::getIsTop);
 
         //分页查询
-        Page<Article> page = new Page<>(pageNum,pageSize);
-        page(page,lambdaQueryWrapper);
+        Page<Article> page = new Page<>(pageNum, pageSize);
+        page(page, lambdaQueryWrapper);
 
         /**
          * 解决categoryName字段没有返回值的问题。在分页之后，封装成ArticleListVo之前，进行处理。第一种方式，用for循环遍历的方式
@@ -159,7 +157,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 
         //把上面那行的查询结果和文章总数封装在PageVo(我们写的实体类)
-        PageVo pageVo = new PageVo(articleListVos,page.getTotal());
+        PageVo pageVo = new PageVo(articleListVos, page.getTotal());
         return ResponseResult.okResult(pageVo);
     }
 
@@ -186,7 +184,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Long categoryId = articleDetailVo.getCategoryId();
         Category category = categoryService.getById(categoryId);
         //如果根据分类id查询的到分类名，那么就把查询到的值设置给ArticleDetailVo实体类的categoryName字段
-        if(category!=null){
+        if (category != null) {
             articleDetailVo.setCategoryName(category.getName());
         }
 
@@ -203,7 +201,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public ResponseResult updateViewCount(Long id) {
         //更新redis中的浏览量，对应文章id的viewCount浏览量。article:viewCount是ViewCountRunner类里面写的
         //用户每从mysql根据文章id查询一次浏览量，那么redis的浏览量就增加1
-        redisCache.incrementCacheMapValue("article:viewCount",id.toString(),1);
+        redisCache.incrementCacheMapValue("article:viewCount", id.toString(), 1);
         return ResponseResult.okResult();
     }
 
@@ -230,5 +228,61 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //添加 博客和标签的关联
         articleTagService.saveBatch(articleTags);
         return ResponseResult.okResult();
+    }
+
+    //---------------------------管理后台(文章管理)-分页查询文章----------------------------
+
+    @Override
+    public PageVo selectArticlePage(Article article, Integer pageNum, Integer pageSize) {
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper();
+
+        queryWrapper.like(StringUtils.hasText(article.getTitle()), Article::getTitle, article.getTitle());
+        queryWrapper.like(StringUtils.hasText(article.getSummary()), Article::getSummary, article.getSummary());
+
+        Page<Article> page = new Page<>();
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+        page(page, queryWrapper);
+
+        //转换成VO
+        List<Article> articles = page.getRecords();
+
+        PageVo pageVo = new PageVo();
+        pageVo.setTotal(page.getTotal());
+        pageVo.setRows(articles);
+        return pageVo;
+    }
+    //----------------------------修改文章-①根据文章id查询对应的文章--------------------------------
+
+    @Override
+    //①先查询根据文章id查询对应的文章
+    public ArticleByIdVo getInfo(Long id) {
+        Article article = getById(id);
+        //获取关联标签
+        LambdaQueryWrapper<ArticleTag> articleTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleTagLambdaQueryWrapper.eq(ArticleTag::getArticleId, article.getId());
+        List<ArticleTag> articleTags = articleTagService.list(articleTagLambdaQueryWrapper);
+        List<Long> tags = articleTags.stream().map(articleTag -> articleTag.getTagId()).collect(Collectors.toList());
+
+        ArticleByIdVo articleVo = BeanCopyUtils.copyBean(article, ArticleByIdVo.class);
+        articleVo.setTags(tags);
+        return articleVo;
+    }
+
+    @Override
+    //②然后才是修改文章
+    public void edit(ArticleDto articleDto) {
+        Article article = BeanCopyUtils.copyBean(articleDto, Article.class);
+        //更新博客信息
+        updateById(article);
+        //删除原有的 标签和博客的关联
+        LambdaQueryWrapper<ArticleTag> articleTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleTagLambdaQueryWrapper.eq(ArticleTag::getArticleId, article.getId());
+        articleTagService.remove(articleTagLambdaQueryWrapper);
+        //添加新的博客和标签的关联信息
+        List<ArticleTag> articleTags = articleDto.getTags().stream()
+                .map(tagId -> new ArticleTag(articleDto.getId(), tagId))
+                .collect(Collectors.toList());
+        articleTagService.saveBatch(articleTags);
     }
 }
