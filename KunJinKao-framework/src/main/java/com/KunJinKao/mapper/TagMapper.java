@@ -1,7 +1,7 @@
 package com.KunJinKao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.KunJinKao.domain.Tag;
+import com.KunJinKao.domain.entity.Tag;
 
 /**
  * @author 35238

@@ -2,7 +2,6 @@ package com.KunJinKao.domain.entity;
 
 import java.util.Date;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.TableField;

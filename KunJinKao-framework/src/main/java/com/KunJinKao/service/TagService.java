@@ -2,7 +2,7 @@ package com.KunJinKao.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.KunJinKao.domain.ResponseResult;
-import com.KunJinKao.domain.Tag;
+import com.KunJinKao.domain.entity.Tag;
 import com.KunJinKao.domain.dto.TagListDto;
 import com.KunJinKao.domain.vo.PageVo;
 

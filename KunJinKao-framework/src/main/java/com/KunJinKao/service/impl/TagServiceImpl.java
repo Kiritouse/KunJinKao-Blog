@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.KunJinKao.domain.ResponseResult;
-import com.KunJinKao.domain.Tag;
+import com.KunJinKao.domain.entity.Tag;
 import com.KunJinKao.domain.dto.TagListDto;
 import com.KunJinKao.mapper.TagMapper;
 import com.KunJinKao.service.TagService;
 import com.KunJinKao.domain.vo.PageVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import static org.apache.xmlbeans.impl.common.XBeanDebug.log;
 
 /**
  * @author 35238
