@@ -1,19 +1,27 @@
 package com.KunJinKao.controller;
 
-import com.KunJinKao.domain.ResponseResult;
-import com.KunJinKao.domain.dto.CategoryDto;
-import com.KunJinKao.domain.entity.Category;
-import com.KunJinKao.domain.vo.ExcelCategoryVo;
-import com.KunJinKao.domain.vo.PageVo;
-import com.KunJinKao.enums.AppHttpCodeEnum;
-import com.KunJinKao.service.CategoryService;
-import com.KunJinKao.domain.vo.CategoryVo;
-import com.KunJinKao.utils.BeanCopyUtils;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.KunJinKao.domain.entity.Category;
+import com.KunJinKao.domain.ResponseResult;
+import com.KunJinKao.domain.dto.CategoryDto;
+import com.KunJinKao.enums.AppHttpCodeEnum;
+import com.KunJinKao.service.CategoryService;
+import com.KunJinKao.utils.BeanCopyUtils;
 import com.KunJinKao.utils.WebUtils;
+import com.KunJinKao.domain.vo.CategoryVo;
+import com.KunJinKao.domain.vo.ExcelCategoryVo;
+import com.KunJinKao.domain.vo.PageVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -36,7 +44,8 @@ public class CategoryController {
         List<CategoryVo> list = categoryService.listAllCategory();
         return ResponseResult.okResult(list);
     }
-    //----------------------------分页查询分类列表-------------------------------------
+
+    //----------------------------分页查询文章的分类列表---------------------------------
 
     @GetMapping("/list")
     public ResponseResult list(Category category, Integer pageNum, Integer pageSize) {
@@ -53,7 +62,8 @@ public class CategoryController {
         return ResponseResult.okResult();
     }
 
-    //------------------------------删除文章分类---------------------------------------
+    //----------------------------删除文章的分类--------------------------------------
+
     @DeleteMapping(value = "/{id}")
     public ResponseResult remove(@PathVariable(value = "id")Long id){
         categoryService.removeById(id);
@@ -63,14 +73,14 @@ public class CategoryController {
     //-----------------------------修改文章的分类--------------------------------------
 
     @GetMapping(value = "/{id}")
-    //①根据分类的id来查询分类
+    //①根据标签的id来查询标签
     public ResponseResult getInfo(@PathVariable(value = "id")Long id){
         Category category = categoryService.getById(id);
         return ResponseResult.okResult(category);
     }
 
     @PutMapping
-    //②根据分类的id来修改分类
+    //②根据标签的id来修改标签
     public ResponseResult edit(@RequestBody Category category){
         categoryService.updateById(category);
         return ResponseResult.okResult();
@@ -78,12 +88,13 @@ public class CategoryController {
 
     //---------------------------把分类数据写入到Excel并导出-----------------------------
 
+    @PreAuthorize("@ps.hasPermission('content:category:export')")//权限控制，ps是PermissionService类的bean名称
     @GetMapping("/export")
     //注意返回值类型是void
-    public void export(HttpServletResponse response) {
+    public void export(HttpServletResponse response){
         try {
             //设置下载文件的请求头，下载下来的Excel文件叫'分类.xlsx'
-            WebUtils.setDownLoadHeader("分类.xlsx", response);
+            WebUtils.setDownLoadHeader("分类.xlsx",response);
             //获取需要导出的数据
             List<Category> xxcategory = categoryService.list();
 

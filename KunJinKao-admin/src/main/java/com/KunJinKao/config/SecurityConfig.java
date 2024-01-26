@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @date 2023/7/22 0022 21:49
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)//权限控制
 //WebSecurityConfigurerAdapter是Security官方提供的类
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -61,26 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/user/login").anonymous()
 
-                // 由于刚开始博客后台模块，还没有登录、权限认证的功能，所以在复制过来后，要把下面的那部分注释掉
-
-
-
-                //为方便测试认证过滤器，我们把查询友链的接口设置为需要登录才能访问。然后我们去访问的时候就能测试登录认证功能了
-//                .antMatchers("/link/getAllLink").authenticated()
-
-                //为方便测试查询个人信息，我们把查询个人信息的接口设置为需要登录才能访问
-                .antMatchers("/user/userInfo").authenticated()
-
                 //退出登录的配置。如果'没登录'就调用'退出登录'，就会报错，报的错设置为'401 需要登录后操作'，也就是authenticated
                 .antMatchers("/logout").authenticated()
-
-                //把文件上传的接口设置为需要登录才能访问
-                .antMatchers("/upload").authenticated()
-
-                //需要登录才能在评论区发送评论
-                .antMatchers("/comment").authenticated()
-
-
 
                 // 除上面外的所有请求全部都需要认证才可访问
                 .anyRequest().authenticated();
@@ -90,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler);
 
+        //关闭默认的注销功能
         http.logout().disable();
 
         //把我们在huanf-blog工程写的JwtAuthenticationTokenFilter过滤器添加到Security的过滤器链中
@@ -99,4 +84,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //允许跨域
         http.cors();
     }
+
 }
