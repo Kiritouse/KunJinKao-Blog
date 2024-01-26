@@ -25,3 +25,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       id-type: auto
+oss:
+  accessKey: ed-XGsWlIJibo6IfvxhDU4JL3ycrphIM8yYEccjA
+  secretKey: KibHHsfw03hHBbmwV1f-MjQJyehW8bPJwGvIEilQ
+  bucket: kunjinkao-blog
