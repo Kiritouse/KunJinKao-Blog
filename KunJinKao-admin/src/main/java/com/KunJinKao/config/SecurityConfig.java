@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/logout").authenticated()
 
                 //把文件上传的接口设置为需要登录才能访问
-//                .antMatchers("/upload").authenticated()
+                .antMatchers("/upload").authenticated()
 
                 //需要登录才能在评论区发送评论
                 .antMatchers("/comment").authenticated()
