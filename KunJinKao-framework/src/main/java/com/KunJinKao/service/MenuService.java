@@ -14,4 +14,7 @@ public interface MenuService extends IService<Menu> {
     List<String> selectPermsByUserId(Long id);
     //查询用户的路由信息，也就是查询权限菜单
     List<Menu> selectRouterMenuTreeByUserId(Long userId);
+
+    //查询菜单列表
+    List<Menu> selectMenuList(Menu menu);
 }
