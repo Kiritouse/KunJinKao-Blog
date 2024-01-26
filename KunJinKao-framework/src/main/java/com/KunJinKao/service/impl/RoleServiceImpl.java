@@ -1,15 +1,17 @@
 package com.KunJinKao.service.impl;
 
-import com.KunJinKao.domain.ResponseResult;
-import com.KunJinKao.domain.entity.RoleMenu;
-import com.KunJinKao.domain.vo.PageVo;
-import com.KunJinKao.service.RoleMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.KunJinKao.constants.SystemConstants;
+import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Role;
+import com.KunJinKao.domain.entity.RoleMenu;
 import com.KunJinKao.mapper.RoleMapper;
+import com.KunJinKao.service.RoleMenuService;
 import com.KunJinKao.service.RoleService;
+import com.KunJinKao.domain.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
         return otherRole;
     }
+
     //------------------------------查询角色列表---------------------------------------
 
     @Override
@@ -84,5 +87,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                 .map(memuId -> new RoleMenu(role.getId(), memuId))
                 .collect(Collectors.toList());
         roleMenuService.saveBatch(roleMenuList);
+    }
+
+    //-----------------------修改角色-保存修改好的角色信息----------------------------
+
+    @Override
+    public void updateRole(Role role) {
+        updateById(role);
+        roleMenuService.deleteRoleMenuByRoleId(role.getId());
+        insertRoleMenu(role);
+    }
+
+    //-----------------------新增用户-①查询角色列表接口----------------------------
+
+    @Override
+    public List<Role> selectRoleAll() {
+        return list(Wrappers.<Role>lambdaQuery().eq(Role::getStatus, SystemConstants.NORMAL));
+    }
+
+    //-----------------------修改用户-①根据id查询用户信息----------------------------
+    @Override
+    public List<Long> selectRoleIdByUserId(Long userId) {
+        return getBaseMapper().selectRoleIdByUserId(userId);
     }
 }

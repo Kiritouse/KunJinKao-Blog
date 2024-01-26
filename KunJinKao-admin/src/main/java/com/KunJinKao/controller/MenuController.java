@@ -3,6 +3,7 @@ package com.KunJinKao.controller;
 import com.KunJinKao.domain.entity.Menu;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.vo.MenuTreeVo;
+import com.KunJinKao.domain.vo.RoleMenuTreeSelectVo;
 import com.KunJinKao.service.MenuService;
 import com.KunJinKao.utils.BeanCopyUtils;
 import com.KunJinKao.domain.vo.MenuVo;
@@ -78,5 +79,16 @@ public class MenuController {
         List<Menu> menus = menuService.selectMenuList(new Menu());
         List<MenuTreeVo> options =  SystemConverter.buildMenuSelectTree(menus);
         return ResponseResult.okResult(options);
+    }
+
+    //---------------------修改角色-根据角色id查询对应角色菜单列表树--------------------------
+
+    @GetMapping(value = "/roleMenuTreeselect/{roleId}")
+    public ResponseResult roleMenuTreeSelect(@PathVariable("roleId") Long roleId) {
+        List<Menu> menus = menuService.selectMenuList(new Menu());
+        List<Long> checkedKeys = menuService.selectMenuListByRoleId(roleId);
+        List<MenuTreeVo> menuTreeVos = SystemConverter.buildMenuSelectTree(menus);
+        RoleMenuTreeSelectVo vo = new RoleMenuTreeSelectVo(checkedKeys,menuTreeVos);
+        return ResponseResult.okResult(vo);
     }
 }
