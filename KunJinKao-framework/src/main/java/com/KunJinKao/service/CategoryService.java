@@ -2,6 +2,7 @@ package com.KunJinKao.service;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Category;
 import com.KunJinKao.domain.vo.CategoryVo;
+import com.KunJinKao.domain.vo.PageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -18,5 +19,8 @@ public interface CategoryService extends IService<Category> {
 
     //写博客-查询文章分类的接口
     List<CategoryVo> listAllCategory();
+
+    //分页查询分类列表
+    PageVo selectCategoryPage(Category category, Integer pageNum, Integer pageSize);
 }
 
