@@ -1,6 +1,12 @@
 package com.KunJinKao.constants;
 
+/**
+ * @author 35238
+ * @date 2023/7/19 0019 19:14
+ */
+//字面值(代码中的固定值)处理，把字面值都在这里定义成常量。可以把这个类叫做常量类
 public class SystemConstants {
+
     /**
      *  文章是草稿
      */
@@ -55,4 +61,9 @@ public class SystemConstants {
      * 权限类型，按钮
      */
     public static final String TYPE_BUTTON = "F";
+
+    /**
+     * 正常状态
+     */
+    public static final String NORMAL = "0";
 }

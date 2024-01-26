@@ -3,11 +3,12 @@ package com.KunJinKao.controller;
 import com.KunJinKao.domain.ResponseResult;
 import com.KunJinKao.domain.entity.Tag;
 import com.KunJinKao.domain.dto.AddTagDto;
-import com.KunJinKao.domain.dto.EditTagDto;
+import com.KunJinKao.domain.dto.TabListDto;
 import com.KunJinKao.domain.dto.TagListDto;
 import com.KunJinKao.service.TagService;
 import com.KunJinKao.utils.BeanCopyUtils;
 import com.KunJinKao.domain.vo.PageVo;
+import com.KunJinKao.domain.vo.TagVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author 35238
@@ -47,28 +50,35 @@ public class TagController {
         return ResponseResult.okResult();
     }
 
-    ////-------------------------------删除标签------------------------------------
+    //-------------------------------删除标签------------------------------------
 
     @DeleteMapping("/{id}")
-    public ResponseResult delete(@PathVariable Long id){
-        tagService.removeById(id);
-        return ResponseResult.okResult();
+    //pageTagList是我们在huanf-framework工程写的方法
+    public ResponseResult deleteTag(@PathVariable Long id){
+        return tagService.deleteTag(id);
     }
 
-    ////-------------------------------修改标签------------------------------------
+    //-------------------------------修改标签------------------------------------
+
 
     @GetMapping("/{id}")
     //①根据标签的id来查询标签
-    public ResponseResult getInfo(@PathVariable(value = "id")Long id){
-        Tag tag = tagService.getById(id);
-        return ResponseResult.okResult(tag);
+    public ResponseResult getLableById(@PathVariable Long id){
+        return tagService.getLableById(id);
     }
 
     @PutMapping
     //②根据标签的id来修改标签
-    public ResponseResult edit(@RequestBody EditTagDto tagDto){
-        Tag tag = BeanCopyUtils.copyBean(tagDto,Tag.class);
-        tagService.updateById(tag);
-        return ResponseResult.okResult();
+    public ResponseResult updateById(@RequestBody TagVo tagVo){
+        return tagService.myUpdateById(tagVo);
+    }
+
+
+    //---------------------------写博文-查询文章标签的接口---------------------------
+
+    @GetMapping("/listAllTag")
+    public ResponseResult listAllTag(){
+        List<TagVo> list = tagService.listAllTag();
+        return ResponseResult.okResult(list);
     }
 }

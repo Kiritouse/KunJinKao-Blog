@@ -6,18 +6,14 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author 35238
- * @date 2023/7/20 0020 15:03
+ * @date 2023/8/6 0006 19:42
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-//返回给前端的特定字段
-public class CategoryVo {
+@NoArgsConstructor
+public class TagVo {
 
     private Long id;
     private String name;
-
-    //描述
-    private String description;
-
+    private String remark;
 }
